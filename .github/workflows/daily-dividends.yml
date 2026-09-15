@@ -1,0 +1,38 @@
+name: Next Dividends - Daily Scraper & Alerts
+
+on:
+  schedule:
+    # Runs at 13:00 UTC (9:00 AM EST) Mon-Fri before US market opens
+    - cron: '0 13 * * 1-5'
+  workflow_dispatch: # Allows manual trigger directly from GitHub Actions tab
+
+jobs:
+  scrape-and-alert:
+    name: Scrape Large-Cap Dividends & Dispatch Alerts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Run Daily Dividend Scraper & Email Dispatcher
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL || 'onboarding@resend.dev' }}
+          MAILING_LIST: ${{ secrets.MAILING_LIST || 'wparajohn@gmail.com' }}
+          APP_URL: ${{ secrets.APP_URL }}
+        run: npx tsx scripts/scrape-and-alert.ts
+
+      - name: Workflow Summary
+        run: |
+          echo "### 🚀 Next Dividends Daily Scraping Complete" >> $GITHUB_STEP_SUMMARY
+          echo "Scraped live market data, verified 3-day ex-dividend deadlines, and dispatched alert emails." >> $GITHUB_STEP_SUMMARY

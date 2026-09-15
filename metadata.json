@@ -1,0 +1,6 @@
+{
+  "name": "Next Dividends",
+  "description": "Upcoming large-cap dividend calendar across 1 to 90 days with automated notifications and daily real market data sync.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
